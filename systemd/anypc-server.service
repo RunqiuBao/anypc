@@ -1,0 +1,19 @@
+# anypc FastAPI inference gateway.
+#
+# A systemd *user* service installed by `make install` and controlled via the
+# `anypc` helper (anypc launch|stop|restart|status|logs). It is started on
+# demand (not enabled), so it does not auto-start on boot.
+
+[Unit]
+Description=anypc FastAPI inference gateway
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/anypc
+Environment=ANYPC_IPC_ENDPOINT=ipc:///tmp/anypc-inference.ipc
+ExecStart=/opt/anypc/.venv/bin/anypc-server --host 0.0.0.0 --port 8000
+
+Restart=on-failure
+RestartSec=3

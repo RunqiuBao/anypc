@@ -1,0 +1,32 @@
+# TigerVNC server for the anypc remote desktop (display :1).
+#
+# A systemd *user* service installed by `make install` and controlled via the
+# `anypc` helper (anypc launch|stop|restart|status|logs). It is started on
+# demand (not enabled), so it does not auto-start on boot. Runs as the user
+# that starts it, using that user's $HOME.
+#
+# No vncpasswd needed: auth is disabled (-SecurityTypes None) because VNC is
+# bound to localhost and reached only through an SSH tunnel, which authenticates.
+# The ~/.vnc/xstartup desktop launcher is created by install_deps.sh.
+
+[Unit]
+Description=anypc TigerVNC server (display :1)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+WorkingDirectory=/opt/anypc
+PIDFile=%h/.vnc/%H:1.pid
+
+# Clean up a stale session from a previous unclean shutdown, then start.
+# VNC binds localhost only and disables auth; reach it via an SSH tunnel:
+#   ssh -L 5901:localhost:5901 user@server   (then: vncviewer localhost:1)
+# WARNING: -SecurityTypes None means anyone who can reach port 5901 needs no
+# password. Only safe while bound to localhost. Do NOT add "-localhost no".
+ExecStartPre=-/usr/bin/vncserver -kill :1
+ExecStart=/usr/bin/vncserver :1 -geometry 1280x800 -depth 24 -localhost yes -SecurityTypes None
+ExecStop=/usr/bin/vncserver -kill :1
+
+Restart=on-failure
+RestartSec=5

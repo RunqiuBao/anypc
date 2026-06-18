@@ -1,0 +1,24 @@
+[project]
+name = "anypc"
+version = "0.1.0"
+description = "FastAPI gateway that relays image + text prompts to an inference process over ZeroMQ IPC."
+readme = { file = "REAME", content-type = "text/markdown" }
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.115,<1.0",
+    "uvicorn[standard]>=0.30,<1.0",
+    "pydantic>=2.7,<3.0",
+    "python-multipart>=0.0.9",
+    "pyzmq>=26.0",
+]
+
+[project.scripts]
+anypc-server = "anypc.cli:main"
+anypc-example-worker = "anypc.worker:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/anypc"]
