@@ -1,0 +1,33 @@
+# Declaration of Purpose
+- Once deployed this repo, a remote server that is accessible through SSH, can become a convenient desktop PC for neural network inference.
+  - Open a VNC viewer.
+  - Setup a WebSocket server instance for receiving remote observations (image + text prompt) and send through IPC to another inference process.
+
+## Remote inference protocol
+The gateway speaks the same WebSocket protocol as
+[openpi remote inference](https://github.com/Physical-Intelligence/openpi/blob/main/docs/remote_inference.md):
+a raw WebSocket carrying [msgpack](https://msgpack.org/) frames with numpy-array
+support. On connect the server sends one metadata frame; thereafter each client
+message is a packed observation dict and each reply is a packed result dict.
+
+Any openpi client can talk to it directly. The openpi client is vendored under
+`anypc.openpi_client` (Apache-2.0, from Physical Intelligence's openpi), so no
+openpi install is needed — `from openpi_client import ...` works too if you have
+openpi installed separately:
+
+```python
+from anypc.openpi_client import image_tools, websocket_client_policy
+
+client = websocket_client_policy.WebsocketClientPolicy(host="<server>", port=8000)
+print(client.get_server_metadata())            # the metadata frame sent on connect
+image = image_tools.convert_to_uint8(          # resize+pad to the model's input
+    image_tools.resize_with_pad(raw_image, 224, 224)
+)
+result = client.infer({"prompt": "...", "observation/image": image})
+```
+
+- `anypc-server` — start the gateway (WebSocket front door + ZeroMQ relay).
+- `anypc-example-worker` — a stub ZeroMQ backend; replace `run_inference` with a real model.
+- `anypc.openpi_client` — vendored openpi websocket client + msgpack-numpy + image helpers.
+- Health check: HTTP `GET /healthz` returns `200 OK`.
+
