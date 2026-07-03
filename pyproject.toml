@@ -2,7 +2,9 @@
 name = "anypc"
 version = "0.1.0"
 description = "WebSocket gateway that relays observations to an inference process over ZeroMQ IPC, using openpi's remote-inference protocol (websockets + msgpack-numpy)."
-readme = { file = "REAME", content-type = "text/markdown" }
+readme = { file = "README.md", content-type = "text/markdown" }
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 dependencies = [
     # openpi remote-inference protocol: raw websockets carrying msgpack-numpy.
