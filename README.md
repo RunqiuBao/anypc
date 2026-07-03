@@ -44,8 +44,9 @@ Everything runs as systemd *user* services under the deploying user:
 | `anypc-server` | WebSocket inference gateway on port 8000 | always |
 | `ngrok-ssh` | ngrok TCP tunnel exposing local SSH (port 22) | only with `WITH_NGROK=1` |
 
-## Server side: fresh machine (one-time)
+## Server side:
 
+### Fresh machine (one-time)
 ```bash
 sudo make install WITH_NGROK=1      # from the cloned repo; omit WITH_NGROK to skip ngrok
 ngrok config add-authtoken <token>  # once per machine (skip if not using ngrok)
