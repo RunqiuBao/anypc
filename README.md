@@ -57,7 +57,7 @@ systemctl --user enable anypc-vnc anypc-server ngrok-ssh   # auto-start at boot
 the unit files in `~/.config/systemd/user/`, and hooks the `anypc` shell
 helper into `~/.bashrc`.
 
-## Day-to-day control
+### Day-to-day control
 
 The `anypc` helper controls the two anypc services — it does **not** touch the
 tunnel:
@@ -77,7 +77,7 @@ systemctl --user stop ngrok-ssh       # careful: if you are SSH'd in via the tun
 systemctl --user disable ngrok-ssh    # stop auto-starting at boot (independent of start/stop)
 ```
 
-## Changing service configuration
+### Changing service configuration
 
 The unit files in `systemd/` are the source of truth (for ngrok, the
 `ExecStart` line carries the region and reserved address). After editing one,
