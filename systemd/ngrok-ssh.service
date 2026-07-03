@@ -1,0 +1,26 @@
+# ngrok TCP tunnel exposing local SSH (port 22).
+#
+# A systemd *user* service, enabled at boot like the anypc units (requires
+# user lingering). Uses a reserved TCP address (paid plan), so the forwarding
+# address is fixed across restarts and reboots:
+#   ssh -p 21324 <user>@1.tcp.jp.ngrok.io
+#
+# Requires a configured authtoken (`ngrok config add-authtoken ...`) — already
+# stored in ~/.config/ngrok/ngrok.yml. Note ngrok allows a limited number of
+# agent sessions per account: stop any manually started `ngrok` before
+# starting this.
+
+[Unit]
+Description=ngrok TCP tunnel to local SSH (port 22)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/ngrok tcp --region=jp --remote-addr=1.tcp.jp.ngrok.io:21324 --log=stdout 22
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

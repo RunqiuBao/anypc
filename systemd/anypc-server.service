@@ -1,8 +1,9 @@
 # anypc WebSocket inference gateway.
 #
 # A systemd *user* service installed by `make install` and controlled via the
-# `anypc` helper (anypc launch|stop|restart|status|logs). It is started on
-# demand (not enabled), so it does not auto-start on boot.
+# `anypc` helper (anypc launch|stop|restart|status|logs). Enabled at boot via
+# `systemctl --user enable`; user lingering must be on so the user manager
+# starts without a login (`sudo loginctl enable-linger $USER`).
 
 [Unit]
 Description=anypc WebSocket inference gateway
@@ -17,3 +18,6 @@ ExecStart=/opt/anypc/.venv/bin/anypc-server --host 0.0.0.0 --port 8000
 
 Restart=on-failure
 RestartSec=3
+
+[Install]
+WantedBy=default.target
